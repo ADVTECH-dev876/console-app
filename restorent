@@ -1,0 +1,119 @@
+import java.util.*;
+
+class Order {
+    int tableNo;
+    List<String> items = new ArrayList<>();
+    double totalBill = 0.0;
+
+    public Order(int tableNo) {
+        this.tableNo = tableNo;
+    }
+}
+
+public class RestaurantApp {
+    static Scanner sc = new Scanner(System.in);
+    static Map<Integer, Order> orders = new HashMap<>();
+
+    // Menu with prices
+    static Map<String, Double> menu = Map.of(
+        "Pizza", 250.0,
+        "Burger", 120.0,
+        "Pasta", 180.0,
+        "Sandwich", 90.0,
+        "Coffee", 70.0,
+        "IceCream", 60.0
+    );
+
+    public static void main(String[] args) {
+        int choice;
+        do {
+            System.out.println("\n=== RESTAURANT ORDERING SYSTEM ===");
+            System.out.println("1. Place Order");
+            System.out.println("2. View Orders");
+            System.out.println("3. Generate Bill");
+            System.out.println("4. Exit");
+            System.out.print("Enter choice: ");
+            choice = sc.nextInt();
+
+            switch (choice) {
+                case 1 -> placeOrder();
+                case 2 -> viewOrders();
+                case 3 -> generateBill();
+                case 4 -> System.out.println("Exiting... Goodbye!");
+                default -> System.out.println("❌ Invalid choice!");
+            }
+        } while (choice != 4);
+    }
+
+    static void placeOrder() {
+        System.out.print("Enter Table Number (1-20): ");
+        int tableNo = sc.nextInt();
+        sc.nextLine(); // consume newline
+
+        if (tableNo < 1 || tableNo > 20) {
+            System.out.println("❌ Invalid table number!");
+            return;
+        }
+
+        // Premium vs Normal section
+        String section = (tableNo <= 10) ? "Premium" : "Normal";
+        System.out.println("✅ Table " + tableNo + " (" + section + " Section)");
+
+        // Create order if not exists
+        Order order = orders.getOrDefault(tableNo, new Order(tableNo));
+
+        System.out.println("\n--- MENU ---");
+        for (String item : menu.keySet()) {
+            System.out.println(item + " - Rs." + menu.get(item));
+        }
+
+        System.out.print("Enter item name to order (or 'done' to finish): ");
+        while (true) {
+            String item = sc.nextLine();
+            if (item.equalsIgnoreCase("done")) break;
+            if (menu.containsKey(item)) {
+                order.items.add(item);
+                order.totalBill += menu.get(item);
+                System.out.println("✅ Added " + item + " (Rs." + menu.get(item) + ")");
+            } else {
+                System.out.println("❌ Item not found in menu!");
+            }
+            System.out.print("Add more items (or 'done'): ");
+        }
+
+        orders.put(tableNo, order);
+        System.out.println("✅ Order placed successfully for Table " + tableNo);
+    }
+
+    static void viewOrders() {
+        if (orders.isEmpty()) {
+            System.out.println("No orders yet.");
+            return;
+        }
+        System.out.println("\n--- Current Orders ---");
+        for (Order o : orders.values()) {
+            System.out.println("Table " + o.tableNo + " | Items: " + o.items + " | Bill: Rs." + o.totalBill);
+        }
+    }
+
+    static void generateBill() {
+        System.out.print("Enter Table Number: ");
+        int tableNo = sc.nextInt();
+
+        Order order = orders.get(tableNo);
+        if (order == null) {
+            System.out.println("❌ No order found for this table!");
+            return;
+        }
+
+        System.out.println("\n--- BILL for Table " + tableNo + " ---");
+        for (String item : order.items) {
+            System.out.println(item + " - Rs." + menu.get(item));
+        }
+        System.out.println("TOTAL: Rs." + order.totalBill);
+
+        // Remove order after billing
+        orders.remove(tableNo);
+        System.out.println("✅ Payment Done. Table " + tableNo + " is now free.");
+    }
+}
