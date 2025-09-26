@@ -1,10 +1,4 @@
-Got it 👍 You want a **README.md** template that can be used for multiple Java console-based apps (ATM, Hospital, Library, Restaurant, Student Attendance, Theater, etc.). I’ll create a general structure with placeholders that you can adapt for each app.
 
-Here’s a clean **README.md** draft:
-
----
-
-````markdown
 # Java Console Applications
 
 This repository contains multiple **Java console-based applications**, each built for learning, practice, and demonstration of Object-Oriented Programming (OOP) concepts.  
